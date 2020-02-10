@@ -29,7 +29,8 @@ class Program
                 // We can't enable static sites using Pulumi (it's not exposed in the ARM API).
                 // Therefore we have to invoke the Azure SDK from within the Pulumi code to enable the static sites 
                 // The code in the Apply method must be idempotent.
-                storageAccount.PrimaryBlobConnectionString.Apply(async v => await EnableStaticSites(v) );
+                if (!Deployment.Instance.IsDryRun)
+                    storageAccount.PrimaryBlobConnectionString.Apply(async v => await EnableStaticSites(v) );
             
             // Export the Web address string for the storage account
             return new Dictionary<string, object>
